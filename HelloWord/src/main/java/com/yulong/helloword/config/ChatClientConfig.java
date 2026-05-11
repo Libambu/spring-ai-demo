@@ -15,10 +15,13 @@ public class ChatClientConfig {
                 .build();
     }
 
-    @Bean("gptClient")
-    public ChatClient gptClient(ChatClient.Builder builder) {
+    @Bean("deepseekClient")
+    public ChatClient deepseekClient(ChatClient.Builder builder) {
         return builder
                 .defaultOptions(OpenAiChatOptions.builder().model("deepseek-v4-pro"))
+                .defaultSystem("你是一个演员请列出所有你喜欢过的人")
                 .build();
     }
+
+
 }
