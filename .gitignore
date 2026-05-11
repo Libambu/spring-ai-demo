@@ -1,0 +1,85 @@
+# =========================
+# OS / Editor
+# =========================
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# VS Code
+.vscode/
+
+# Eclipse / STS
+.classpath
+.project
+.settings/
+.apt_generated/
+.springBeans
+.sts4-cache/
+
+# NetBeans
+nbproject/private/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# =========================
+# Java / Spring Boot build
+# =========================
+target/
+build/
+.gradle/
+dependency-reduced-pom.xml
+
+# =========================
+# Runtime files
+# =========================
+*.log
+logs/
+log/
+*.pid
+*.seed
+*.pid.lock
+hs_err_pid*
+replay_pid*
+
+# Spring Boot devtools restart
+.restart/
+
+# =========================
+# Local environment / secrets
+# =========================
+.env
+.env.*
+!.env.example
+
+# Do not commit local overrides
+application-local.yml
+application-local.yaml
+application-local.properties
+application-dev.yml
+application-dev.yaml
+application-dev.properties
+
+# =========================
+# Test / coverage outputs
+# =========================
+coverage/
+jacoco.exec
+*.hprof
+
+# =========================
+# Temporary files
+# =========================
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
