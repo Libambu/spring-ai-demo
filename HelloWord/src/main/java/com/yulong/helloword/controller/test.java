@@ -39,7 +39,7 @@ class test {
     }
 
     //消息流式发送
-    @GetMapping(value = "/ai/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(value = "/ai/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE + ";charset=UTF-8")
     Flux<String> generationStream(String userInput) {
         return this.deepseekClient.prompt()
                 .user(userInput)
