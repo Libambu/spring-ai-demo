@@ -1,7 +1,11 @@
 package com.yulong.helloword.controller;
 
+import java.util.Map;
+
 import com.yulong.helloword.entity.pjo.ActorMovies;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.prompt.Prompt;
+import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,5 +58,17 @@ class test {
                 .user(userInput)
                 .call()
                 .entity(ActorMovies.class);
+    }
+
+    //提示词模版
+    @GetMapping(value = "/ai/template", produces = MediaType.TEXT_EVENT_STREAM_VALUE + ";charset=UTF-8")
+    Flux<String> PromptTemplate(String userInput) {
+        PromptTemplate promptTemplate = new PromptTemplate("介绍一下{topic}的相关信息");
+        Prompt prompt = promptTemplate.create(Map.of("topic", userInput));
+        return this.deepseekClient
+                .prompt(prompt)
+                //.user(u->u.text("请用100字介绍一下这个话题{}").param("topic", userInput))template简洁写法
+                .stream()
+                .content();
     }
 }
