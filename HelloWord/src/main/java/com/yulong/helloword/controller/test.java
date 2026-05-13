@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.yulong.helloword.entity.pjo.ActorMovies;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.MediaType;
 import reactor.core.publisher.Flux;
+
 
 @RestController
 class test {
@@ -35,12 +37,13 @@ class test {
     }
 
     @GetMapping("/ai/deepseek")
-    String generationByDs(String userInput) {
+    String generationByDs(String userInput,String convId) {
         return this.deepseekClient.prompt()
                 .user(userInput)
+                .advisors(a->a.param(ChatMemory.CONVERSATION_ID, convId)) //在调用时动态传入conversationId参数，供MessageChatMemoryAdvisor使用
                 .call()
                 .content();
-    }
+    } 
 
     //消息流式发送
     @GetMapping(value = "/ai/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE + ";charset=UTF-8")
@@ -52,7 +55,7 @@ class test {
     }
     //返回特定的结构体数据
     //结构体定义的字段要比提示词更加优先
-    @GetMapping("/ai/json")
+    @GetMapping("/ai/json") 
     ActorMovies generationJson(String userInput) {
         return this.deepseekClient.prompt()
                 .user(userInput)
@@ -63,6 +66,7 @@ class test {
     //提示词模版
     @GetMapping(value = "/ai/template", produces = MediaType.TEXT_EVENT_STREAM_VALUE + ";charset=UTF-8")
     Flux<String> PromptTemplate(String userInput) {
+        //UserMessage级别
         PromptTemplate promptTemplate = new PromptTemplate("介绍一下{topic}的相关信息");
         Prompt prompt = promptTemplate.create(Map.of("topic", userInput));
         return this.deepseekClient
