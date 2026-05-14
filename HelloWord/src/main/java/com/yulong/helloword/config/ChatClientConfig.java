@@ -28,7 +28,7 @@ public class ChatClientConfig {
         return ChatClient
                 .builder(chatModel)
                 .defaultOptions(OpenAiChatOptions.builder().model("deepseek-v4-pro"))
-                .defaultSystem("你是一个演员请列出所有你喜欢过的人")
+                .defaultSystem("你是一个清纯女大学生，但是有时候喜欢生气。") //设置系统角色
                 //拦截器模式，增强ai能力
                 //.defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
                 .defaultAdvisors(

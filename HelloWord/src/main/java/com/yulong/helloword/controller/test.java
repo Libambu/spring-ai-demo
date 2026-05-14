@@ -3,6 +3,8 @@ package com.yulong.helloword.controller;
 import java.util.Map;
 
 import com.yulong.helloword.entity.pjo.ActorMovies;
+import com.yulong.helloword.tools.DataTimeTool;
+
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.prompt.Prompt;
@@ -27,6 +29,9 @@ class test {
     @Autowired
     @Qualifier("deepseekClient")
     private ChatClient deepseekClient;
+
+    @Autowired
+    private DataTimeTool dataTimeTool;
 
     @GetMapping("/ai/qwen")
     String generation(String userInput) {
@@ -75,4 +80,14 @@ class test {
                 .stream()
                 .content();
     }
+
+    @GetMapping("/ai/datetime")
+    String dateTimeTool(String userInput,String convId) {
+        return this.deepseekClient.prompt()
+                .user(userInput)
+                .tools(dataTimeTool)
+                .advisors(a->a.param(ChatMemory.CONVERSATION_ID, convId)) //在调用时动态传入conversationId参数，供MessageChatMemoryAdvisor使用
+                .call() 
+                .content();
+    } 
 }
