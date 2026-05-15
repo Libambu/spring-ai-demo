@@ -43,6 +43,7 @@ class ChatModelController {
     String generationByDs(String userInput,String convId) {
         return this.deepseekClient.prompt()
                 .user(userInput)
+                .tools(dataTimeTool)
                 .advisors(a->a.param(ChatMemory.CONVERSATION_ID, convId)) //在调用时动态传入conversationId参数，供MessageChatMemoryAdvisor使用
                 .call()
                 .content();

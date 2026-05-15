@@ -2,18 +2,25 @@ package com.yulong.helloword.config;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
+import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.memory.InMemoryChatMemoryRepository;
 import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.ai.openai.OpenAiChatOptions;
+import org.springframework.ai.vectorstore.SearchRequest;
+import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import com.yulong.helloword.advisor.MySimpleLoggerAdvisor;
+import org.springframework.beans.factory.annotation.Autowired;
 
 
 @Configuration
 public class ChatClientConfig {
+
+    @Autowired
+    private VectorStore vectorStore;
 
     @Bean("qwenClient")
     public ChatClient qwenClient(OpenAiChatModel chatModel) {
@@ -23,8 +30,25 @@ public class ChatClientConfig {
                 .build();
     }
 
+    /**
+     * 集成对话记忆和向量数据库的 ChatClient 配置，对话log
+     * @param chatModel
+     * @param chatMemory
+     * @return
+     */
     @Bean("deepseekClient")
     public ChatClient deepseekClient(OpenAiChatModel chatModel,ChatMemory chatMemory) {
+
+        QuestionAnswerAdvisor qaAdvisor = QuestionAnswerAdvisor
+                .builder(vectorStore)
+                .searchRequest(
+                    SearchRequest.builder()
+                        .topK(3) // 设置返回最相关的3条文档
+                        .similarityThreshold(0.6) // 设置相似度分数，只有相似度高于0.6的文档才会被返回
+                        .build()
+                ).build();
+
+
         return ChatClient
                 .builder(chatModel)
                 .defaultOptions(OpenAiChatOptions.builder().model("deepseek-v4-pro"))
@@ -33,9 +57,10 @@ public class ChatClientConfig {
                 //.defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
                 .defaultAdvisors(
                     new MySimpleLoggerAdvisor(),
-                    MessageChatMemoryAdvisor.builder(chatMemory).build()
+                    MessageChatMemoryAdvisor.builder(chatMemory).build(),
+                    qaAdvisor
                 ) //添加自定义的日志记录advisor
-                .build();
+                .build(); 
     }
     //内存型
     @Bean
@@ -46,3 +71,4 @@ public class ChatClientConfig {
                 .build();
     }
 }
+ 
